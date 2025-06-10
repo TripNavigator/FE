@@ -9,7 +9,10 @@ export function useGeolocation() {
     const [location, setLocation] = useState<Coordinate>(null);
 
     useEffect(() => {
-        if (!navigator.geolocation) return;
+        if (!navigator.geolocation) {
+            console.warn("Geolocation is not supported by this browser.");
+            return;
+        }
 
         const watcher = navigator.geolocation.watchPosition(
             (position) => {
@@ -20,6 +23,13 @@ export function useGeolocation() {
 
             (err) => {
                 console.error("Geolocation error: ", err);
+                if (err.code === 1) {
+                    console.warn("Permission denied");
+                } else if (err.code === 2) {
+                    console.warn("Position unavailable");
+                } else if (err.code === 3) {
+                    console.warn("Timeout");
+                }
                 setLocation(null);
             },
             {

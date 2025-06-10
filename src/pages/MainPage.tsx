@@ -1,41 +1,74 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import SearchBar from "../components/SearchBar";
 import MapView from "../components/MapView";
 import BottomPanel from "../components/BottomPanel";
 import CategorySelector from "../components/CategorySelector";
 import FooterNav from "../components/FooterNav";
 import { useGeolocation } from "../hooks/useGeolocation";
-import useCategoryMarkers from "../hooks/useCategoryMarkers";
+import useCategorySearch from "../hooks/useCategorySearch";
+import type { Category } from "../types/Category";
 
 export default function MainPage() {
-    const [selectedCategory, setSelectedCategory] = useState<string>("");
+    const [map, setMap] = useState<kakao.maps.Map | null>(null);
+    const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
 
-    const [category, setCategory] = useState("식당")
-    const mapRef = useRef<kakao.maps.Map | null>(null);
     const location = useGeolocation();
+    const { results, loading } = useCategorySearch(
+        map,
+        selectedCategory?.code,
+        location ?? undefined
+    );
 
-    useCategoryMarkers({ map: mapRef.current, category, location });
+    const handleSelectCategory = (category: Category) => {
+        if (selectedCategory?.code === category.code) {
+            // 같은 걸 다시 누르면 선택 해제
+            setSelectedCategory(null);
+        } else {
+            setSelectedCategory(category);
+        }
+    };
 
     return (
-        <div style={{width:"100vw", height: "100vh", position: "relative" }}>
-            <MapView />
+        <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
+            <MapView onMapLoad={setMap} />
+
             <div
                 style={{
-                  position: "absolute",
-                  top: 20,
-                  left: 20,
-                  right: 20,
-                  zIndex: 10,
+                    position: "absolute",
+                    top: 20,
+                    left: 20,
+                    right: 20,
+                    zIndex: 10,
                 }}
             >
-                <SearchBar /><p />
+                <SearchBar />
                 <CategorySelector
                     selectedCategory={selectedCategory}
-                    onSelectCategory={setSelectedCategory}
+                    onSelectCategory={handleSelectCategory}
                 />
             </div>
-                <BottomPanel />
-                <FooterNav />
+
+            <BottomPanel
+                content={
+                    loading ? (
+                        <p>로딩 중...</p>
+                    ) : results.length > 0 ? (
+                        <ul>
+                            {results.map((place) => (
+                                <li key={place.id}>
+                                    <strong>{place.name}</strong>
+                                    <br />
+                                    {place.address}
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p>장소를 찾을 수 없습니다.</p>
+                    )
+                }
+            />
+
+            <FooterNav />
         </div>
     );
 }
