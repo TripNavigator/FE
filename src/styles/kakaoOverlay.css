@@ -1,0 +1,65 @@
+.placeinfo_wrap {
+    position: absolute;
+    bottom: 40px;
+    left: -140px;
+    width: 240px;
+    font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+    z-index: 100;
+}
+
+.placeinfo {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 12px;
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.placeinfo .title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #0077ff;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.placeinfo .title:hover {
+    text-decoration: underline;
+}
+
+.placeinfo span {
+    display: block;
+    margin-bottom: 4px;
+    line-height: 1.4;
+}
+
+.placeinfo .jibun {
+    color: #888;
+    font-size: 13px;
+}
+
+.placeinfo .tel {
+    color: #2d8c49;
+    font-weight: 500;
+    margin-top: 6px;
+}
+
+.after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border: 8px solid transparent;
+    border-top-color: #fff;
+    z-index: -1;
+}
